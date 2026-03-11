@@ -1,27 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
     <head>
+        <link rel="stylesheet" href="/index.css">
+        <meta charset="UTF-8">
         <title>TODO-LIST</title>
     </head>
     <body>
-        <header style="height: 50px; background-color: darkslateblue;">            
-            <h1 style="text-align: center; vertical-align: center;">Tarefas</h1>
+        <header>            
+            <h1>Tarefas</h1>
         </header>
-        <h1>Nova Tarefa</h1>
+        <h2>Nova Tarefa</h2>
         <form action="/create" method="POST">
             <input type="text" name="description" required>
             <button type="submit">Criar tarefa</button>
         </form>
 
-        <h1>Tarefas</h1>
+        <h2>Tarefas</h2>
         <ul>
             {% for task in tasks %}
                 <li>
-                    <form action="/update/{{ task.id }}" method="POST" style="display: inline;">
+                    <form action="/update/{{ task.id }}" method="POST">
                         <input type="text" name="description" value="{{ task.description }}">
                         <button type="submit">Atualizar</button>
                     </form>
-                    <form action="/delete/{{ task.id }}" method="POST" style="display: inline;">
+                    <form action="/delete/{{ task.id }}" method="POST">
                         <button type="submit">Deletar Tarefa</button>
                     </form>
                 </li>
