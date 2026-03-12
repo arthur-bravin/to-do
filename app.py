@@ -1,13 +1,16 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class Tasks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(60), unique=True, nullable=False)
+    active = db.Column(db.Boolean, nullable=False, default=False)
 
 # cRud
 @app.route("/")
@@ -19,6 +22,8 @@ def index():
 @app.route("/create", methods=["POST"])
 def create_task():
     description = request.form["description"]
+    value = True if request.form.get("active") == "1" else False
+    active = value
 
     # Valida se registro já existe
     task_exist = Tasks.query.filter_by(description = description).first()
@@ -26,7 +31,7 @@ def create_task():
     if task_exist:
         return "Erro: Tarefa já existe!!!", 400
 
-    new_task = Tasks(description = description)
+    new_task = Tasks(description = description, active = active)
     db.session.add(new_task)
     db.session.commit()
     return redirect("/")

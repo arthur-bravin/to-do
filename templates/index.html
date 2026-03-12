@@ -1,19 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
     <head>
-        <link rel="stylesheet" href="/index.css">
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TODO-LIST</title>
+        <style>
+            body {
+                font-family: Verdana, Geneva, Tahoma, sans-serif; 
+                margin: 0; 
+                padding: 0; 
+                height: 100%;
+            }
+
+            header {
+                height: 10%; 
+                background-color: darkslateblue; 
+                margin: 0; 
+                padding: 0; 
+                height: 20vh; 
+                vertical-align: middle; 
+                align-items: center; 
+                text-align: center;
+            }
+
+            form {
+                display: inline;
+            }
+
+            h1 {
+                text-align: center; 
+                vertical-align: middle;
+            }
+
+            #createPOPUP {
+                position: fixed;
+                backdrop-filter: blur(10px) brightness(1.1);
+            }
+        </style>
     </head>
     <body>
         <header>            
             <h1>Tarefas</h1>
         </header>
         <h2>Nova Tarefa</h2>
-        <form action="/create" method="POST">
-            <input type="text" name="description" required>
-            <button type="submit">Criar tarefa</button>
-        </form>
+        <dialog id="createPOPUP" action="default_popup">
+            <form action="/create" method="POST">
+                <input type="text" name="description" required>
+                <br>
+                <input type="checkbox" id="createCB" name="active" value="1">
+                <button type="submit" onclick="document.getElementById('createPOPUP').close()">Criar tarefa</button>
+                <button onclick="document.getElementById('createPOPUP').close()">Cancelar</button>
+            </form>
+        </dialog>
 
         <h2>Tarefas</h2>
         <ul>
@@ -29,5 +67,6 @@
                 </li>
             {% endfor %}
         </ul>
+        <button onclick="document.getElementById('createPOPUP').showModal()">Nova Tarefa</button>
     </body>
 </html>
