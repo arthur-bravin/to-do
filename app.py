@@ -15,25 +15,26 @@ class Tasks(db.Model):
 # cRud
 @app.route("/")
 def index():
-    tasks = Tasks.query.all()   
+    tasks = Tasks.query.filter_by(active = 1).all()   
     return render_template("index.html", tasks=tasks)
 
 # Crud
 @app.route("/create", methods=["POST"])
 def create_task():
-    description = request.form["description"]
-    value = True if request.form.get("active") == "1" else False
-    active = value
+    if request.form.get("btnPopUp") == "save":
+        description = request.form["description"]
+        value = True if request.form.get("active") == "1" else False
+        active = value
 
-    # Valida se registro já existe
-    task_exist = Tasks.query.filter_by(description = description).first()
+        # Valida se registro já existe
+        task_exist = Tasks.query.filter_by(description = description).first()
 
-    if task_exist:
-        return "Erro: Tarefa já existe!!!", 400
+        if task_exist:
+            return "Erro: Tarefa já existe!!!", 400
 
-    new_task = Tasks(description = description, active = active)
-    db.session.add(new_task)
-    db.session.commit()
+        new_task = Tasks(description = description, active = active)
+        db.session.add(new_task)
+        db.session.commit()
     return redirect("/")
 
 # crUd
@@ -55,6 +56,15 @@ def delete_task(task_id):
         db.session.delete(task)
         db.session.commit()
     return redirect("/")
+
+# filter
+@app.route("/filter", methods=["POST"])
+def filter_task():
+    if request.form.get("showAll") == "1":
+        tasks = Tasks.query.all()   
+    else:
+        tasks = Tasks.query.filter_by(active = 1).all()   
+    return render_template("index.html", tasks=tasks)
 
 if __name__ == "__main__":
     with app.app_context():

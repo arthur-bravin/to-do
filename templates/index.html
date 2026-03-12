@@ -10,14 +10,13 @@
                 margin: 0; 
                 padding: 0; 
                 height: 100%;
+                color: white;
+                background-image: linear-gradient(to right, rgb(14, 2, 82), rgb(20, 10, 212));
             }
 
             header {
-                height: 10%; 
-                background-color: darkslateblue; 
                 margin: 0; 
                 padding: 0; 
-                height: 20vh; 
                 vertical-align: middle; 
                 align-items: center; 
                 text-align: center;
@@ -35,6 +34,52 @@
             #createPOPUP {
                 position: fixed;
                 backdrop-filter: blur(10px) brightness(1.1);
+                color: white;
+                background-color: #1C1C1C;
+                border: none;
+                border-radius: 20px;
+            }
+
+            #button {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 20px;
+                background-color: mediumblue;
+                color: white;
+                cursor: pointer;
+                box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            }
+
+            #input {         
+                font-family: Verdana, Geneva, Tahoma, sans-serif;     
+                color: white;   
+                background-color: #1C1C1C; 
+                border: none;
+                border-radius: 20px;
+                padding: 12px 24px;
+                cursor: pointer;
+                width: 500px;
+                margin: 5px;
+            }
+
+            #lista {
+                list-style-type: none;
+            }
+
+            #showAll {
+                margin-left: 130px;
+                cursor: pointer;
+            }
+
+            #checkbox {
+                cursor: pointer;
+            }
+
+            #inputNewTask {
+                margin: 20px;
+                width: 500px;
+                border-radius: 20px;
+                padding: 12px 24px;
             }
         </style>
     </head>
@@ -42,31 +87,48 @@
         <header>            
             <h1>Tarefas</h1>
         </header>
-        <h2>Nova Tarefa</h2>
-        <dialog id="createPOPUP" action="default_popup">
-            <form action="/create" method="POST">
-                <input type="text" name="description" required>
-                <br>
-                <input type="checkbox" id="createCB" name="active" value="1">
-                <button type="submit" onclick="document.getElementById('createPOPUP').close()">Criar tarefa</button>
-                <button onclick="document.getElementById('createPOPUP').close()">Cancelar</button>
+        <ul>
+            <button id="button" onclick="document.getElementById('createPOPUP').showModal()">Nova Tarefa</button>
+            <form id="formShowAll" action="/filter" method="POST">
+                <input type="checkbox" id="showAll" name="showAll" value="1" onchange="document.getElementById('formShowAll').submit()">
             </form>
-        </dialog>
-
-        <h2>Tarefas</h2>
+            <label for="showAll" id="labelShowAll">Mostrar todas as tarefas</label>
+        </ul>
         <ul>
             {% for task in tasks %}
-                <li>
+                <li id="lista">
                     <form action="/update/{{ task.id }}" method="POST">
-                        <input type="text" name="description" value="{{ task.description }}">
-                        <button type="submit">Atualizar</button>
+                        <input id="input" type="text" name="description" value="{{ task.description }}" readonly onclick="document.getElementById('createPOPUP').showModal()">
+                        <button id="button" type="submit">Atualizar</button>
                     </form>
                     <form action="/delete/{{ task.id }}" method="POST">
-                        <button type="submit">Deletar Tarefa</button>
+                        <button id="button" type="submit">Deletar Tarefa</button>
                     </form>
                 </li>
             {% endfor %}
         </ul>
-        <button onclick="document.getElementById('createPOPUP').showModal()">Nova Tarefa</button>
+        <dialog id="createPOPUP" action="default_popup">
+            <form action="/create" method="POST">
+                <input id="inputNewTask" type="text" name="description" maxlength="60">
+                <br>
+                <input type="checkbox" id="checkbox" name="active" value="1">
+                <label for="checkbox">Tarefa concluída?</label>
+                <br>
+                <button id="button" name="btnPopUp" type="submit" value="save" onclick="document.getElementById('createPOPUP').close()">Criar tarefa</button>
+                <button id="button" name="btnPopUp" type="submit" value="exit" onclick="document.getElementById('createPOPUP').close()">Cancelar</button>
+            </form>
+        </dialog>
+        <script>
+            document.getElementById('showAll').addEventListener(
+                'change', 
+                function(){ localStorage.setItem('checkboxState', this.checked); }
+            );
+
+            // Restaurar estado
+            window.onload = function() {
+                var state = localStorage.getItem('checkboxState');
+                if (state === 'true') { document.getElementById('showAll').checked = true; }
+            };
+        </script>
     </body>
 </html>
